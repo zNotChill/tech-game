@@ -1,6 +1,7 @@
 
 import { listener } from "./EventListener";
 import {SolarSteamGenerator} from "./items/steamage/SolarSteamGenerator"
+import {LowVoltageTurbine} from "./items/electricage/LowVoltageTurbine";
 
 const map = [
   {
@@ -8,15 +9,23 @@ const map = [
     y: 0,
     item: "solar_steam_generator",
     className: "SolarSteamGenerator"
+  },
+  {
+    x: 1,
+    y: 0,
+    item: "low_voltage_turbine",
+    className: "LowVoltageTurbine"
   }
 ]
 
 const items = {
-  SolarSteamGenerator
+  SolarSteamGenerator,
+  LowVoltageTurbine
 }
 
 const tickingItems: any[] = [];
-const tickRate = 20;
+const tickRate = 50;
+let currentTick = 0;
 
 map.forEach((cell) => {
   const ItemClass = items[cell.className];
@@ -29,14 +38,14 @@ map.forEach((cell) => {
 });
 
 setInterval(() => {
+  currentTick++;
+  
   tickingItems.forEach((item) => {
     item.executeOnTick();
   });
 }, tickRate);
 
 listener.on("stopticking", (data) => {
-  console.log("stopticking event received from", data.item);
-  
   tickingItems.forEach((item, index) => {
     if (item.uuid === data.uuid) {
       tickingItems.splice(index, 1);
